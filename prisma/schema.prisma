@@ -1,0 +1,116 @@
+generator client {
+  provider  = "prisma-client-py"
+  interface = "sync"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Assistant {
+  id                  String                @id @default(cuid()) @db.VarChar(255)
+  name                String
+  instructions        String?
+  model               String                @default("gpt-4-0613")
+  createdAt           DateTime?             @default(now())
+  updatedAt           DateTime?             @updatedAt
+  deletedAt           DateTime?
+  metadata            Json?
+  assistantCategory   AssistantCategory[]
+  assistantDatasource AssistantDatasource[]
+  conversation        Conversation[]
+}
+
+model AssistantCategory {
+  id          String    @id @default(cuid()) @db.VarChar(255)
+  assistantId String    @db.VarChar(255)
+  categoryId  String?   @db.VarChar(255)
+  assistant   Assistant @relation(fields: [assistantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  category    Category? @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
+  deletedAt   DateTime?
+}
+
+model AssistantDatasource {
+  id           String      @id @default(cuid()) @db.VarChar(255)
+  assistantId  String      @db.VarChar(255)
+  datasourceId String?     @db.VarChar(255)
+  assistant    Assistant   @relation(fields: [assistantId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  datasource   Datasource? @relation(fields: [datasourceId], references: [id])
+  createdAt    DateTime?   @default(now())
+  updatedAt    DateTime?   @updatedAt
+  deletedAt    DateTime?
+}
+
+model Category {
+  id                String              @id @default(cuid()) @db.VarChar(255)
+  name              String
+  description       String?
+  type              String?             @default("CUSTOM") // CUSTOM or DEFAULT
+  createdAt         DateTime?           @default(now())
+  updatedAt         DateTime?           @updatedAt
+  deletedAt         DateTime?
+  assistantCategory AssistantCategory[]
+  categoryTopic     CategoryTopic[]
+  message           Message[]
+}
+
+model CategoryTopic {
+  id         String    @id @default(cuid()) @db.VarChar(255)
+  categoryId String?   @db.VarChar(255)
+  topicId    String?   @db.VarChar(255)
+  category   Category? @relation(fields: [categoryId], references: [id])
+  topic      Topic?    @relation(fields: [topicId], references: [id])
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+  deletedAt  DateTime?
+}
+
+model Conversation {
+  id          String    @id @default(cuid()) @db.VarChar(255)
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
+  deletedAt   DateTime?
+  metadata    Json?
+  assistantId String    @db.VarChar(255)
+  assistant   Assistant @relation(fields: [assistantId], references: [id])
+  message     Message[]
+}
+
+model Datasource {
+  id                  String                @id @default(cuid()) @db.VarChar(255)
+  name                String
+  description         String?
+  type                String?               @default("DOCUMENT") // i.e. 'DOCUMENT', 'ENDPOINT', 'FUNCTION', etc..
+  createdAt           DateTime?             @default(now())
+  updatedAt           DateTime?             @updatedAt
+  deletedAt           DateTime?
+  metadata            Json?
+  assistantDatasource AssistantDatasource[]
+}
+
+model Message {
+  id             String        @id @default(cuid()) @db.VarChar(255)
+  role           String        @default("USER") // i.e. 'SYSTEM', 'USER', 'ASSISTANT', 'FUNCTION_REQUEST', 'FUNCTION_RESPONSE'
+  content        String        @db.Text()
+  timestamp      DateTime?     @default(now())
+  metadata       Json?         @default("{}")
+  conversationId String?       @db.VarChar(255)
+  categoryId     String?       @db.VarChar(255)
+  topicId        String?       @db.VarChar(255)
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+  category       Category?     @relation(fields: [categoryId], references: [id])
+  topic          Topic?        @relation(fields: [topicId], references: [id])
+}
+
+model Topic {
+  id            String          @id @default(cuid()) @db.VarChar(255)
+  name          String          @unique
+  createdAt     DateTime?       @default(now())
+  updatedAt     DateTime?       @updatedAt
+  deletedAt     DateTime?
+  categoryTopic CategoryTopic[]
+  message       Message[]
+}

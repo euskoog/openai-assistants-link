@@ -1,0 +1,15 @@
+fastapi
+pydantic==1.10.12
+starlette
+typing_extensions
+uvicorn
+docx2txt
+openai
+colorlog
+prisma==0.9.1
+pytest
+python-multipart
+config
+textblob
+rich
+requests
