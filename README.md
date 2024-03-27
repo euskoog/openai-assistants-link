@@ -87,7 +87,7 @@ uvicorn app.main:app --reload --port 8000
 
 Deploying on Railway is straightforward:
 
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new/template?template=https://github.com/your-repo&plugins=postgresql&referralCode=YourCode)
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/-M8zbi?referralCode=Ma0xP7)
 
 1. Click the "Deploy on Railway" button to start.
 2. Follow the prompts to configure and deploy your FastAPI server.
