@@ -12,7 +12,6 @@ from app.lib.models.assistant_datasource import (
 from app.lib.openai import get_openai_client
 from app.lib.prisma import prisma
 from app.lib.models.response import Response
-from app.lib.openai.openai_tool import OpenAICodeInterpreterTool, OpenAIRetrievalTool
 
 logger = logging.getLogger(__name__)
 
@@ -108,34 +107,15 @@ async def create_assistant_datasource(
                                         assistant_id=openai_assistant_id
                                     )
                                 )
+                                vector_store_ids = openai_assistant.tool_resources.file_search.vector_store_ids
 
-                                # add file to assistant
-                                existing_files = openai_assistant.file_ids
-                                existing_files.append(file_id)
-
-                                # add retrieval tool to assistant if it doesn't exist
                                 existing_tools = openai_assistant.tools
-
-                                # add retrieval tool if it doesn't exist
-                                for existing_tool in existing_tools:
-                                    if existing_tool.type == "retrieval":
-                                        # remove it since we cant serialize whatever type it comes back as from openai
-                                        existing_tools.remove(existing_tool)
-                                        break
-
-                                existing_tools.append(
-                                    OpenAIRetrievalTool.to_dict())
-
-                                # if the file extension is csv, also add the code interpreter tool
-                                if metadata["content_type"] == "text/csv":
-                                    existing_tools.append(
-                                        OpenAICodeInterpreterTool.to_dict()
-                                    )
+                                print("existing_tools", existing_tools)
 
                                 openai_client.beta.assistants.update(
                                     assistant_id=openai_assistant_id,
                                     tools=existing_tools,
-                                    file_ids=existing_files,
+                                    tool_resources={"file_search": {"vector_store_ids": vector_store_ids}},
                                 )
 
         assistant_datasource = prisma.assistantdatasource.create(
