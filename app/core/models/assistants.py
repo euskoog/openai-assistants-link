@@ -5,7 +5,7 @@ from pydantic import BaseModel
 class AssistantBase(BaseModel):
     name: str
     instructions: str
-    model: str = "gpt-4-1106-preview"
+    model: str = "gpt-3.5-turbo"
 
 
 class CreateAssistantResponse(BaseModel):

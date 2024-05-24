@@ -168,7 +168,7 @@ class EvaluationService:
             query=query, category_name=category_name, category_topics=category_topics, previous_messages=previous_messages_formatted
         )
 
-        completion = ChatCompletion(llm_model="gpt-4")
+        completion = ChatCompletion(llm_model="gpt-3.5-turbo")
         result = completion.run(
             messages=[{"role": "system", "content": rendered_prompt}])
 
