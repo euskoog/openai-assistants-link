@@ -69,7 +69,7 @@ def pprint_message(message: ThreadMessage):
                 f" [blue][link={file_url}]{local_file_path}[/link][/blue]\n\n"
             )
 
-    for file_id in message.file_ids:
+    for file_id in message.attachments:
         content += f"Attached file: {file_id}\n"
 
     # Create the panel for the message

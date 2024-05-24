@@ -57,7 +57,7 @@ class Classification:
             
         prompt = self._generate_prompt(input)
 
-        completion = ChatCompletion(llm_model="gpt-4")
+        completion = ChatCompletion()
         result = completion.run(messages=[{"role": "system", "content": prompt}])
 
         return result

@@ -114,7 +114,7 @@ class ChatService:
                 else:
                     # only add the retrieval tool once - and only if the document is not a type that requires retrieval tool
                     if not any(
-                        tool.type == "retrieval" for tool in tools
+                        tool.type == "file_search" for tool in tools
                     ):  # if there is no retrieval tool in the list of tools
                         tools.append(OpenAIRetrievalTool)
 

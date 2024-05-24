@@ -18,8 +18,8 @@ class ChatCompletion:
     def __init__(
         self,
         llm_model: Optional[
-            Literal["gpt-3.5-turbo", "gpt-4"]
-        ] = "gpt-4",
+            Literal["gpt-3.5-turbo"]
+        ] = "gpt-3.5-turbo",
     ):
         self.client = OpenAI()
         self.client.api_key = os.environ.get("OPENAI_API_KEY")

@@ -12,7 +12,8 @@ model Assistant {
   id                  String                @id @default(cuid()) @db.VarChar(255)
   name                String
   instructions        String?
-  model               String                @default("gpt-4-0613")
+  model               String                @default("gpt-3.5-turbo")
+  temperature         Float                 @default(1.00)
   createdAt           DateTime?             @default(now())
   updatedAt           DateTime?             @updatedAt
   deletedAt           DateTime?

@@ -191,7 +191,7 @@ class OpenAITool(BaseModel):
         )
 
     def to_dict(self) -> dict:
-        if self.type == "retrieval":
+        if self.type == "file_search":
             return {
                 "type": self.type,
             }
@@ -201,7 +201,7 @@ class OpenAITool(BaseModel):
         }
 
 
-OpenAIRetrievalTool = OpenAITool(type="retrieval")
+OpenAIRetrievalTool = OpenAITool(type="file_search")
 OpenAICodeInterpreterTool = OpenAITool(type="code_interpreter")
 
 

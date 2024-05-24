@@ -41,7 +41,7 @@ async def create_assistant(
 
         # first, create an OpenAI assistant
         openai_assistant = openAIClient.beta.assistants.create(
-            name=body.name, instructions=body.instructions, model=body.model
+            name=body.name, instructions=body.instructions, model=body.model, temperature=body.temperature
         )
 
         metadata = {
@@ -55,6 +55,7 @@ async def create_assistant(
                 "name": body.name,
                 "instructions": body.instructions,
                 "model": body.model,
+                "temperature": body.temperature,
                 "metadata": Json(metadata),
             }
         )

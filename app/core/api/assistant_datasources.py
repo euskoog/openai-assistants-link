@@ -108,17 +108,26 @@ async def create_assistant_datasource(
                                         assistant_id=openai_assistant_id
                                     )
                                 )
+                                
+                                if openai_assistant.tool_resources.file_search and openai_assistant.tool_resources.file_search.vector_store_ids:
+                                    vector_store_ids = openai_assistant.tool_resources.file_search.vector_store_ids
+                                else:
+                                    # if vector_store_ids is empty, create a new vector store
+                                    vector_store = openai_client.beta.vector_stores.create(name=f"vector-store-{openai_assistant_id}")
+                                    vector_store_ids = [vector_store.id]
+                                    print("new vector store created", vector_store_ids)
+                                
+                                # add the file to the vector store batch files
+                                vector_store_files = openai_client.beta.vector_stores.file_batches.create_and_poll(
+                                    vector_store_id=vector_store_ids[0],
+                                    file_ids=[file_id],
+                                )
 
-                                # add file to assistant
-                                existing_files = openai_assistant.file_ids
-                                existing_files.append(file_id)
-
-                                # add retrieval tool to assistant if it doesn't exist
                                 existing_tools = openai_assistant.tools
-
+                                
                                 # add retrieval tool if it doesn't exist
                                 for existing_tool in existing_tools:
-                                    if existing_tool.type == "retrieval":
+                                    if existing_tool.type == "file_search":
                                         # remove it since we cant serialize whatever type it comes back as from openai
                                         existing_tools.remove(existing_tool)
                                         break
@@ -135,7 +144,8 @@ async def create_assistant_datasource(
                                 openai_client.beta.assistants.update(
                                     assistant_id=openai_assistant_id,
                                     tools=existing_tools,
-                                    file_ids=existing_files,
+                                    tool_resources={"file_search": {
+                                        "vector_store_ids": vector_store_ids}},
                                 )
 
         assistant_datasource = prisma.assistantdatasource.create(
