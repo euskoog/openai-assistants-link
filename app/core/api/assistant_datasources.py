@@ -109,7 +109,19 @@ async def create_assistant_datasource(
                                     )
                                 )
                                 
-                                vector_store_ids = openai_assistant.tool_resources.file_search.vector_store_ids
+                                if openai_assistant.tool_resources.file_search and openai_assistant.tool_resources.file_search.vector_store_ids:
+                                    vector_store_ids = openai_assistant.tool_resources.file_search.vector_store_ids
+                                else:
+                                    # if vector_store_ids is empty, create a new vector store
+                                    vector_store = openai_client.beta.vector_stores.create(name=f"vector-store-{openai_assistant_id}")
+                                    vector_store_ids = [vector_store.id]
+                                    print("new vector store created", vector_store_ids)
+                                
+                                # add the file to the vector store batch files
+                                vector_store_files = openai_client.beta.vector_stores.file_batches.create_and_poll(
+                                    vector_store_id=vector_store_ids[0],
+                                    file_ids=[file_id],
+                                )
 
                                 existing_tools = openai_assistant.tools
                                 
